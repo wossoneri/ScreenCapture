@@ -19,15 +19,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".CaptureActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity android:name=".RecordActivity" />
 
-        <service
-            android:name=".ScreenCaptureService"
-            android:enabled="true"
-            android:exported="true"></service>
     </application>
 
 </manifest>

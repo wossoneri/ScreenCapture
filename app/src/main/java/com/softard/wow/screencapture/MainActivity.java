@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static MediaProjection sMediaProjection;
     private Button mBtnCapture;
     private MediaProjectionManager mProjectionManager;
+    private ScreenCapture mSC;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mBtnCapture.setOnClickListener(this);
 
         mProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+
     }
 
     @Override
@@ -56,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                i.putExtra("path", "some path");
 //                startActivity(i);
                 startActivityForResult(mProjectionManager.createScreenCaptureIntent(), REQUEST_CODE);
+
                 break;
             default:
                 break;
@@ -68,9 +71,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (RESULT_OK == resultCode && REQUEST_CODE == requestCode) {
             sMediaProjection = mProjectionManager.getMediaProjection(resultCode, data);
             if (sMediaProjection != null) {
-                Intent i = new Intent(MainActivity.this, ScreenCaptureService.class);
+//                Intent i = new Intent(MainActivity.this, ScreenCaptureService.class);
 //                i.putExtra(ScreenCaptureService.EXTRA_PATH, "some path");
-                i.putExtra(ScreenCaptureService.EXTRA_MEDIA_PROJECTION, () sMediaProjection);
+//                i.putExtra(ScreenCaptureService.EXTRA_MEDIA_PROJECTION, () sMediaProjection);
+                new ScreenCapture(this, sMediaProjection, "").startProjection();
             }
         }
     }
