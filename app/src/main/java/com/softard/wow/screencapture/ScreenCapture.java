@@ -102,7 +102,7 @@ public class ScreenCapture {
 
         //start capture reader
         mImageReader = ImageReader.newInstance(mWidth, mHeight,
-                PixelFormat.RGBA_8888, 1);
+                PixelFormat.RGBA_8888, 2);
         mVirtualDisplay = sMediaProjection.createVirtualDisplay(
                 "ScreenShot",
                 mWidth,
@@ -125,7 +125,9 @@ public class ScreenCapture {
                         Image.Plane[] planes = image.getPlanes();
                         ByteBuffer buffer = planes[0].getBuffer();
                         int pixelStride = planes[0].getPixelStride();
+                        Log.d("WOW", "pixelStride is " + pixelStride);
                         int rowStride = planes[0].getRowStride();
+                        Log.d("WOW", "row Stride is " + rowStride);
                         int rowPadding = rowStride - pixelStride * mWidth;
 
                         bitmap = Bitmap.createBitmap(mWidth + rowPadding / pixelStride,
