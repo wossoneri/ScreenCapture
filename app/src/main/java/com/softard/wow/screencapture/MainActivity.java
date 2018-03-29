@@ -11,24 +11,25 @@ import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-import java.io.Serializable;
-
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int REQUEST_CODE = 100;
     private static String[] PERMISSIONS = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.CAMERA
     };
     private static MediaProjection sMediaProjection;
     private Button mBtnCapture;
+    private Button mBtnRecordScreen;
+    private Button mBtnRecordCamera;
     private MediaProjectionManager mProjectionManager;
     private ScreenCapture mSC;
 
@@ -39,6 +40,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mBtnCapture = findViewById(R.id.btn_capture);
         mBtnCapture.setOnClickListener(this);
+
+        mBtnRecordScreen = findViewById(R.id.btn_record);
+        mBtnRecordScreen.setOnClickListener(this);
+
+        mBtnRecordCamera = findViewById(R.id.btn_record_camera);
+        mBtnRecordCamera.setOnClickListener(this);
 
         mProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
 
@@ -59,6 +66,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                startActivity(i);
                 startActivityForResult(mProjectionManager.createScreenCaptureIntent(), REQUEST_CODE);
 
+                break;
+            case R.id.btn_record:
+                startActivity(new Intent(MainActivity.this, ScreenRecordActivity.class));
+                break;
+
+            case R.id.btn_record_camera:
+                startActivity(new Intent(MainActivity.this, CameraRecordActivity.class));
                 break;
             default:
                 break;

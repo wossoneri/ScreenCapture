@@ -8,12 +8,38 @@
 
     <Button
         android:id="@+id/btn_capture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start Projection"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="140dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:text="Start Capture"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_record"
+        android:layout_width="140dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="16dp"
+        android:text="Record Screen"
+        app:layout_constraintEnd_toEndOf="@+id/btn_capture"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/btn_capture"
+        app:layout_constraintTop_toBottomOf="@+id/btn_capture" />
+
+    <Button
+        android:id="@+id/btn_record_camera"
+        android:layout_width="140dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="16dp"
+        android:text="Record Camera"
+        app:layout_constraintEnd_toEndOf="@+id/btn_record"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/btn_record"
+        app:layout_constraintTop_toBottomOf="@+id/btn_record" />
 
 </android.support.constraint.ConstraintLayout>
