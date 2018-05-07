@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mBtnCapture;
     private Button mBtnRecordScreen;
     private Button mBtnRecordCamera;
+    private Button mBtnScanQR;
     private MediaProjectionManager mProjectionManager;
     private ScreenCapture mSC;
 
@@ -46,6 +47,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mBtnRecordCamera = findViewById(R.id.btn_record_camera);
         mBtnRecordCamera.setOnClickListener(this);
+
+        mBtnScanQR = findViewById(R.id.btn_scan_qr);
+        mBtnScanQR.setOnClickListener(this);
 
         mProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
 
@@ -74,6 +78,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btn_record_camera:
                 startActivity(new Intent(MainActivity.this, CameraRecordActivity.class));
                 break;
+
+            case R.id.btn_scan_qr:
+                startActivity(new Intent(MainActivity.this, ScanQRActivity.class));
+                break;
+
             default:
                 break;
         }

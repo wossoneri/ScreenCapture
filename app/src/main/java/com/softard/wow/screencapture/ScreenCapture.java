@@ -90,7 +90,6 @@ public class ScreenCapture {
 
         WindowManager window = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         mDisplay = window.getDefaultDisplay();
-//        mDisplay = getWindowManager().getDefaultDisplay();
         DisplayMetrics metrics = new DisplayMetrics();
         // use getMetrics is 2030, use getRealMetrics is 2160, the diff is NavigationBar's height
         mDisplay.getRealMetrics(metrics);
@@ -101,8 +100,7 @@ public class ScreenCapture {
         mHeight = metrics.heightPixels;//size.y;
 
         //start capture reader
-        mImageReader = ImageReader.newInstance(mWidth, mHeight,
-                PixelFormat.RGBA_8888, 2);
+        mImageReader = ImageReader.newInstance(mWidth, mHeight, PixelFormat.RGBA_8888, 2);
         mVirtualDisplay = sMediaProjection.createVirtualDisplay(
                 "ScreenShot",
                 mWidth,

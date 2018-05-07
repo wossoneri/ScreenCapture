@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ScreenCapture</string>
+    <string name="scan_qr_code">扫一扫</string>
 </resources>
