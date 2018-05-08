@@ -1,4 +1,4 @@
-package com.softard.wow.screencapture.Utils;
+package com.softard.wow.screencapture.QRCode;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -12,11 +12,13 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.softard.wow.screencapture.Utils.ScreenUtils;
+
 /**
  * Created by wow on 5/7/18.
  */
 
-public class CropView extends View {
+public class DetectQRView extends View {
 
     // Private Constants ///////////////////////////////////////////////////////
     private static final float PRE_LEFT = 0f;
@@ -66,20 +68,17 @@ public class CropView extends View {
 
     private int mPreviewWidth;
     private int mPreviewHeight;
-    private Context mContext;
     private float mDensity;
 
     // Constructors ////////////////////////////////////////////////////////////
-    public CropView(Context context) {
+    public DetectQRView(Context context) {
         super(context);
         // TODO Auto-generated constructor stub
-        mContext = context;
         initData();
     }
 
-    public CropView(Context context, AttributeSet attrs) {
+    public DetectQRView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
         initData();
     }
 
@@ -97,7 +96,7 @@ public class CropView extends View {
         if (0 == mPreviewWidth && 0 == mPreviewHeight) {
             mPreviewWidth = getWidth();
             mPreviewHeight = getHeight();
-            init(mContext);
+            init();
         }
         canvas.drawRect(mBorderBound.left, mBorderBound.top, mBorderBound.right,
                 mBorderBound.bottom, mBorderPaint);
@@ -136,7 +135,11 @@ public class CropView extends View {
         return null;
     }
 
-    private void init(Context context) {
+    public RectF getScanSize() {
+        return mBorderBound;
+    }
+
+    private void init() {
 //        Log.d("WOW", "w:" + getWidth() + "  h:" + getHeight());
 
 
@@ -166,7 +169,7 @@ public class CropView extends View {
         mPreviewWidth = 0;
         mPreviewHeight = 0;
 
-        mDensity = mContext.getResources().getDisplayMetrics().density;
+        mDensity = ScreenUtils.getScreenDensity();
         Log.d("WOW", "density " + mDensity);
 
         mBmpPaint = new Paint();
