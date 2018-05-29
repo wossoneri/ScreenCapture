@@ -49,4 +49,14 @@
         app:layout_constraintStart_toStartOf="@+id/btn_record_camera"
         app:layout_constraintTop_toBottomOf="@+id/btn_record_camera" />
 
+    <Button
+        android:id="@+id/btn_rtsp_player"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Play Rtsp"
+        app:layout_constraintEnd_toEndOf="@+id/btn_scan_qr"
+        app:layout_constraintStart_toStartOf="@+id/btn_scan_qr"
+        app:layout_constraintTop_toBottomOf="@+id/btn_scan_qr" />
+
 </android.support.constraint.ConstraintLayout>
