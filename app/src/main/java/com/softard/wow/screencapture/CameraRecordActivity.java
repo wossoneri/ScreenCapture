@@ -32,6 +32,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.softard.wow.screencapture.Utils.ScreenUtils;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -206,8 +208,6 @@ public class CameraRecordActivity extends AppCompatActivity {
         }
 
     };
-    private String mFilePath = Environment.getExternalStoragePublicDirectory(
-            android.os.Environment.DIRECTORY_DOWNLOADS) + "/video.mp4";
     private boolean isRecording = false;
     private Button mBtnCapture;
 
@@ -382,7 +382,7 @@ public class CameraRecordActivity extends AppCompatActivity {
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mMediaRecorder.setOutputFile(mFilePath);
+        mMediaRecorder.setOutputFile(ScreenUtils.VIDEO_PATH);
         mMediaRecorder.setVideoEncodingBitRate(10000000);
         mMediaRecorder.setVideoFrameRate(30);
         mMediaRecorder.setVideoSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());

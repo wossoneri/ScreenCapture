@@ -22,6 +22,8 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.softard.wow.screencapture.Utils.ScreenUtils;
+
 import java.io.IOException;
 
 public class ScreenRecordActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener {
@@ -156,8 +158,7 @@ public class ScreenRecordActivity extends AppCompatActivity implements TextureVi
     }
 
     private void initRecorder() {
-        Log.v("WOW", "video save path " + Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS) + "/video.mp4");
+        Log.v("WOW", "video save path " + ScreenUtils.VIDEO_PATH);
 
         try {
             mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -171,9 +172,7 @@ public class ScreenRecordActivity extends AppCompatActivity implements TextureVi
             mMediaRecorder.setVideoSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
             mMediaRecorder.setVideoFrameRate(30);
 
-            mMediaRecorder.setOutputFile(Environment
-                    .getExternalStoragePublicDirectory(Environment
-                            .DIRECTORY_DOWNLOADS) + "/video.mp4");
+            mMediaRecorder.setOutputFile(ScreenUtils.VIDEO_PATH);
             mMediaRecorder.setVideoEncodingBitRate(512 * 1000);
 
 //            int rotation = getWindowManager().getDefaultDisplay().getRotation();
@@ -240,8 +239,7 @@ public class ScreenRecordActivity extends AppCompatActivity implements TextureVi
             mPlayer.release();
         }
         try {
-            mPlayer.setDataSource(Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_DOWNLOADS) + "/video.mp4");
+            mPlayer.setDataSource(ScreenUtils.VIDEO_PATH);
             mPlayer.setSurface(mSurface);
             mPlayer.prepare();
             mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {

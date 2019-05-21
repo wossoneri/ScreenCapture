@@ -13,6 +13,9 @@ import android.widget.TextView;
 
 import com.softard.wow.screencapture.R;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by wow on 5/8/18.
  */
@@ -38,9 +41,8 @@ public class ResultDialog extends Dialog {
         private Bitmap bitmap;
         private String result;
 
-        public Builder() {
-
-        }
+        @BindView(R.id.dlg_result_imageView) ImageView iv;
+        @BindView(R.id.dlg_result_content) TextView tv;
 
         public Builder(Context context) {
             this.context = context;
@@ -59,11 +61,9 @@ public class ResultDialog extends Dialog {
         public ResultDialog create() {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View layout = inflater.inflate(R.layout.dlg_scan_result, null);
+            ButterKnife.bind(layout);
 
-            ImageView iv = layout.findViewById(R.id.dlg_result_imageView);
             iv.setImageBitmap(this.bitmap);
-
-            TextView tv = layout.findViewById(R.id.dlg_result_content);
             tv.setText(this.result);
 
             final ResultDialog dialog = new ResultDialog(context);

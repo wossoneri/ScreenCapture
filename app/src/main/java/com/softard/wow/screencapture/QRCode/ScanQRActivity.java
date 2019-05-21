@@ -29,17 +29,39 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Size;
+import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Toast;
 
+import com.softard.wow.screencapture.MainApplication;
 import com.softard.wow.screencapture.R;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Collections;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class ScanQRActivity extends AppCompatActivity {
+
+    private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
+    static {
+        ORIENTATIONS.append(Surface.ROTATION_0, 90);
+        ORIENTATIONS.append(Surface.ROTATION_90, 0);
+        ORIENTATIONS.append(Surface.ROTATION_180, 270);
+        ORIENTATIONS.append(Surface.ROTATION_270, 180);
+    }
+    /**
+     * Orientation of the camera sensor
+     */
+    private int mSensorOrientation;
+
 
     /**
      * Camera state: Showing camera preview.
@@ -63,9 +85,9 @@ public class ScanQRActivity extends AppCompatActivity {
     private static final int STATE_PICTURE_TAKEN = 4;
     private static String TAG = "ScanQRActivity";
     private int mState = STATE_PREVIEW;
-    private TextureView mTextureView;
-    private FloatingActionButton mFabCapture;
-    private DetectQRView mQRView;
+    @BindView(R.id.scan_texture) TextureView mTextureView;
+    @BindView(R.id.fab_scan) FloatingActionButton mFabCapture;
+    @BindView(R.id.detect_qr_view) DetectQRView mQRView;
 
     // 拍照用的
     private ImageReader mImageReader;
@@ -78,7 +100,7 @@ public class ScanQRActivity extends AppCompatActivity {
         @Override
         public void onImageAvailable(ImageReader reader) {
             Log.d("WOW", "AAAAAAvaliable!!!!!!");
-            mBackgroundHandler.post(new ImageProcessor(reader.acquireNextImage(), mQRView.getScanSize()));
+            mBackgroundHandler.post(new ImageProcessor(reader.acquireNextImage(), mQRView.getScanSize(), ScanQRActivity.this));
         }
 
     };
@@ -205,10 +227,7 @@ public class ScanQRActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanqr);
-
-        mQRView = findViewById(R.id.detect_qr_view);
-        mTextureView = findViewById(R.id.scan_texture);
-        mFabCapture = findViewById(R.id.fab_scan);
+        ButterKnife.bind(this);
         mFabCapture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -273,6 +292,30 @@ public class ScanQRActivity extends AppCompatActivity {
             mImageReader.setOnImageAvailableListener(
                     mOnImageAvailableListener, mBackgroundHandler);
 
+// Find out if we need to swap dimension to get the preview size relative to sensor
+            // coordinate.
+            int displayRotation = getWindowManager().getDefaultDisplay().getRotation();
+            //noinspection ConstantConditions
+            mSensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+            boolean swappedDimensions = false;
+            switch (displayRotation) {
+                case Surface.ROTATION_0:
+                case Surface.ROTATION_180:
+                    if (mSensorOrientation == 90 || mSensorOrientation == 270) {
+                        swappedDimensions = true;
+                    }
+                    break;
+                case Surface.ROTATION_90:
+                case Surface.ROTATION_270:
+                    if (mSensorOrientation == 0 || mSensorOrientation == 180) {
+                        swappedDimensions = true;
+                    }
+                    break;
+                default:
+                    Log.e(TAG, "Display rotation is invalid: " + displayRotation);
+            }
+
+
             mCameraId = cameraId;
             manager.openCamera(mCameraId, mStateCallback, null);
 
@@ -305,7 +348,8 @@ public class ScanQRActivity extends AppCompatActivity {
             mPreviewRequestBuilder.addTarget(surface);
 
             // Here, we create a CameraCaptureSession for camera preview.
-            mCameraDevice.createCaptureSession(Collections.singletonList(surface),
+            mCameraDevice.createCaptureSession(/*Collections.singletonList(surface)*/
+                    Arrays.asList(surface, mImageReader.getSurface()),
                     new CameraCaptureSession.StateCallback() {
 
                         @Override
@@ -458,6 +502,21 @@ public class ScanQRActivity extends AppCompatActivity {
         return 0;
     }
 
+    // ORIENTATION
+    /**
+     * Retrieves the JPEG orientation from the specified screen rotation.
+     *
+     * @param rotation The screen rotation.
+     * @return The JPEG orientation (one of 0, 90, 270, and 360)
+     */
+    private int getOrientation(int rotation) {
+        // Sensor orientation is 90 for most devices, or 270 for some devices (eg. Nexus 5X)
+        // We have to take that into account and rotate JPEG properly.
+        // For devices with orientation of 90, we simply return our mapping from ORIENTATIONS.
+        // For devices with orientation of 270, we need to rotate the JPEG 180 degrees.
+        return (ORIENTATIONS.get(rotation) + mSensorOrientation + 270) % 360;
+    }
+
     // capture
     private void takePicture() {
         lockFocus();
@@ -534,8 +593,8 @@ public class ScanQRActivity extends AppCompatActivity {
 //            setAutoFlash(captureBuilder);
 
             // Orientation
-//            int rotation = getWindowManager().getDefaultDisplay().getRotation();
-//            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, getOrientation(rotation));
+            int rotation = getWindowManager().getDefaultDisplay().getRotation();
+            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, getOrientation(rotation));
 
             CameraCaptureSession.CaptureCallback CaptureCallback
                     = new CameraCaptureSession.CaptureCallback() {
@@ -570,11 +629,13 @@ public class ScanQRActivity extends AppCompatActivity {
          */
 //        private final File mFile;
         private RectF mWindow;
+        private Context mContext;
 
-        ImageProcessor(Image image, RectF window) {
+        ImageProcessor(Image image, RectF window, Context context) {
             mImage = image;
 //            mFile = file;
             mWindow = window;
+            mContext = context;
         }
 
         @Override
@@ -584,27 +645,38 @@ public class ScanQRActivity extends AppCompatActivity {
             byte[] bytes = new byte[buffer.remaining()];
             buffer.get(bytes);
             Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+
+            FileOutputStream output = null;
+            try {
+                output = new FileOutputStream(new File("/sdcard/tesseract/img.png"));
+                output.write(bytes);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                mImage.close();
+                if (null != output) {
+                    try {
+                        output.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+
+
+
+
+
+
+
             bmp = Bitmap.createBitmap(bmp, (int) mWindow.left, (int) mWindow.top, (int) mWindow.width(), (int) mWindow.height());
 
-            ResultDialog.Builder builder = new ResultDialog.Builder();
-            builder.setBitmap(bmp).setResult(Utils.readBitmap(bmp)).create().show();
+            ResultDialog.Builder builder = new ResultDialog.Builder(mContext);
+            builder.setBitmap(bmp).setResult("000").create().show();
 
-//            FileOutputStream output = null;
-//            try {
-//                output = new FileOutputStream(mFile);
-//                output.write(bytes);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } finally {
-//                mImage.close();
-//                if (null != output) {
-//                    try {
-//                        output.close();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
+
         }
 
     }

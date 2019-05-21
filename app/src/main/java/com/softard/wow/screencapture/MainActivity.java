@@ -14,10 +14,14 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.softard.wow.screencapture.QRCode.ScanQRActivity;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -29,11 +33,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Manifest.permission.CAMERA
     };
     private static MediaProjection sMediaProjection;
-    private Button mBtnCapture;
-    private Button mBtnRecordScreen;
-    private Button mBtnRecordCamera;
-    private Button mBtnScanQR;
-    private Button mBtnRtsp;
+    @BindView(R.id.btn_capture) Button mBtnCapture;
+    @BindView(R.id.btn_record) Button mBtnRecordScreen;
+    @BindView(R.id.btn_record_camera) Button mBtnRecordCamera;
+    @BindView(R.id.btn_scan_qr) Button mBtnScanQR;
+    @BindView(R.id.btn_rtsp_player) Button mBtnRtsp;
     private MediaProjectionManager mProjectionManager;
     private ScreenCapture mSC;
 
@@ -41,20 +45,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
-        mBtnCapture = findViewById(R.id.btn_capture);
         mBtnCapture.setOnClickListener(this);
-
-        mBtnRecordScreen = findViewById(R.id.btn_record);
         mBtnRecordScreen.setOnClickListener(this);
-
-        mBtnRecordCamera = findViewById(R.id.btn_record_camera);
         mBtnRecordCamera.setOnClickListener(this);
-
-        mBtnScanQR = findViewById(R.id.btn_scan_qr);
         mBtnScanQR.setOnClickListener(this);
-
-        mBtnRtsp = findViewById(R.id.btn_rtsp_player);
         mBtnRtsp.setOnClickListener(this);
 
         mProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
@@ -74,8 +70,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                Intent i = new Intent(MainActivity.this, CaptureActivity.class);
 //                i.putExtra("path", "some path");
 //                startActivity(i);
-                startActivityForResult(mProjectionManager.createScreenCaptureIntent(), REQUEST_CODE);
-
+                startActivityForResult(mProjectionManager.createScreenCaptureIntent(),
+                        REQUEST_CODE);
                 break;
             case R.id.btn_record:
                 startActivity(new Intent(MainActivity.this, ScreenRecordActivity.class));
@@ -99,12 +95,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("WOW", "on result : requestCode = " + requestCode + " resultCode = " + resultCode);
         if (RESULT_OK == resultCode && REQUEST_CODE == requestCode) {
             sMediaProjection = mProjectionManager.getMediaProjection(resultCode, data);
             if (sMediaProjection != null) {
 //                Intent i = new Intent(MainActivity.this, ScreenCaptureService.class);
 //                i.putExtra(ScreenCaptureService.EXTRA_PATH, "some path");
 //                i.putExtra(ScreenCaptureService.EXTRA_MEDIA_PROJECTION, () sMediaProjection);
+                Log.d("WOW", "Start capturing...");
                 new ScreenCapture(this, sMediaProjection, "").startProjection();
             }
         }
