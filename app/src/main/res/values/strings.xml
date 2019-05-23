@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">ScreenCapture</string>
-    <string name="scan_qr_code">扫一扫</string>
+    <string name="scan_qr_code">Scan</string>
+
+    <string name="socket_server">Socket Server</string>
+    <string name="socket_client">Socket Client</string>
 </resources>

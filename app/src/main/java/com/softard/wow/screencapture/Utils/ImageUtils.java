@@ -1,9 +1,12 @@
 package com.softard.wow.screencapture.Utils;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
 /**
@@ -49,6 +52,7 @@ public class ImageUtils {
 
     /**
      * 这个方法可以转换，但是得到的图片右边多了一列，比如上面方法得到1080x2160，这个方法得到1088x2160
+     * 所以要对得到的Bitmap裁剪一下
      *
      * @param image
      * @param config
@@ -65,10 +69,35 @@ public class ImageUtils {
         int pixelStride = planes[0].getPixelStride();
         int rowStride = planes[0].getRowStride();
         int rowPadding = rowStride - pixelStride * width;
-        bitmap = Bitmap.createBitmap(width + rowPadding / pixelStride, height,
-                config);
+        Log.d("WOW",
+                "pixelStride:" + pixelStride + ". rowStride:" + rowStride + ". rowPadding" + rowPadding);
+
+        bitmap = Bitmap.createBitmap(
+                width + rowPadding / pixelStride/*equals: rowStride/pixelStride */
+                , height, config);
         bitmap.copyPixelsFromBuffer(buffer);
 
-        return bitmap;
+        return Bitmap.createBitmap(bitmap, 0, 0, width, height);
+//        return bitmap;
     }
+
+    /**
+     * PNG
+     * @return
+     */
+    public static byte[] bitmap2byte(Bitmap bmp, int quality) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.PNG, quality, baos);
+        return baos.toByteArray();
+    }
+
+    public static Bitmap byte2bitmap(byte[] data) {
+        if (data.length != 0) {
+            return BitmapFactory.decodeByteArray(data, 0, data.length);
+        } else {
+            return null;
+        }
+    }
+
+
 }

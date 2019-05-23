@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -19,6 +20,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".View.SocketActivity"></activity>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop">
@@ -28,15 +30,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ScreenRecordActivity" />
+        <activity android:name=".View.ScreenRecordActivity" />
         <activity
-            android:name=".CameraRecordActivity"
+            android:name=".View.CameraRecordActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".QRCode.ScanQRActivity"
             android:label="@string/scan_qr_code"
-            android:parentActivityName=".MainActivity"></activity>
-        <activity android:name=".RTSPlayerActivity"></activity>
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".View.RTSPlayerActivity" />
     </application>
 
 </manifest>

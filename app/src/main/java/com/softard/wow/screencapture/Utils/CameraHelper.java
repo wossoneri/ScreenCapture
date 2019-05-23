@@ -1,4 +1,4 @@
-package com.softard.wow.screencapture;
+package com.softard.wow.screencapture.Utils;
 
 import android.annotation.TargetApi;
 import android.hardware.Camera;

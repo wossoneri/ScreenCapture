@@ -1,4 +1,4 @@
-package com.softard.wow.screencapture;
+package com.softard.wow.screencapture.View;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.softard.wow.screencapture.R;
 import com.softard.wow.screencapture.Utils.ScreenUtils;
 
 import java.io.IOException;

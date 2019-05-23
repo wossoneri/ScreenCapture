@@ -1,4 +1,4 @@
-package com.softard.wow.screencapture;
+package com.softard.wow.screencapture.View;
 
 
 import android.Manifest;
@@ -18,7 +18,6 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.ImageReader;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
@@ -32,6 +31,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.softard.wow.screencapture.R;
 import com.softard.wow.screencapture.Utils.ScreenUtils;
 
 import java.io.IOException;

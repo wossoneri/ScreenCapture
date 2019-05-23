@@ -1,8 +1,10 @@
-package com.softard.wow.screencapture;
+package com.softard.wow.screencapture.View;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.VideoView;
+
+import com.softard.wow.screencapture.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

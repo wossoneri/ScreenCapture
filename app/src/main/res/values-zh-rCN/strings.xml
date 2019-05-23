@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">截屏</string>
+    <string name="scan_qr_code">扫一扫</string>
+    <string name="socket_server">Socket 服务器</string>
+    <string name="socket_client">Socket 客户端</string>
+</resources>
