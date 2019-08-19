@@ -23,7 +23,10 @@
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp"
-        android:text="Start" />
+        android:checked="false"
+        android:text="开始"
+        android:textOff="点击开始"
+        android:textOn="点击结束" />
 
     <Button
         android:id="@+id/btn_play"
@@ -34,11 +37,11 @@
         android:layout_marginTop="8dp"
         android:text="Play" />
 
-    <TextureView
-        android:id="@+id/texture"
-        android:layout_below="@id/btn_play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <!--<TextureView-->
+        <!--android:id="@+id/texture"-->
+        <!--android:layout_below="@id/btn_play"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"/>-->
 
 
 </RelativeLayout>

@@ -4,4 +4,11 @@
 
     <string name="socket_server">Socket Server</string>
     <string name="socket_client">Socket Client</string>
+
+    <string name="using_your_mic_to_record_audio">Using your mic to record audio and your sd card to save video file</string>
+    <string name="no_permission">No Permission!</string>
+    <string name="create_screenRecorder_failure">Create Screen Recorder failed</string>
+    <string name="stop_recorder">Stop Recorder</string>
+    <string name="restart_recorder">Restart recorder</string>
+    <string name="no_permission_to_write_sd_ard">No permission to write sd card</string>
 </resources>

@@ -20,7 +20,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".View.SocketActivity"></activity>
+        <activity android:name=".View.ScreenRecordByCodecActivity"></activity>
+
+        <service
+            android:name=".View.ScreenRecordThread"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".View.SocketActivity" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop">

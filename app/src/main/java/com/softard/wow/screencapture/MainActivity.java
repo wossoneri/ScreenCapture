@@ -14,6 +14,7 @@ import com.softard.wow.screencapture.Utils.ScreenCapturer;
 import com.softard.wow.screencapture.View.CameraRecordActivity;
 import com.softard.wow.screencapture.View.RTSPlayerActivity;
 import com.softard.wow.screencapture.View.ScreenRecordActivity;
+import com.softard.wow.screencapture.View.ScreenRecordByCodecActivity;
 import com.softard.wow.screencapture.View.SocketActivity;
 
 import butterknife.BindView;
@@ -25,6 +26,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private static MediaProjection sMediaProjection;
     @BindView(R.id.btn_capture) Button mBtnCapture;
     @BindView(R.id.btn_record) Button mBtnRecordScreen;
+    @BindView(R.id.btn_record_codec) Button mBtnRecordByCodec;
     @BindView(R.id.btn_record_camera) Button mBtnRecordCamera;
     @BindView(R.id.btn_scan_qr) Button mBtnScanQR;
     @BindView(R.id.btn_rtsp_player) Button mBtnRtsp;
@@ -40,6 +42,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         mBtnCapture.setOnClickListener(this);
         mBtnRecordScreen.setOnClickListener(this);
+        mBtnRecordByCodec.setOnClickListener(this);
         mBtnRecordCamera.setOnClickListener(this);
         mBtnScanQR.setOnClickListener(this);
         mBtnRtsp.setOnClickListener(this);
@@ -67,6 +70,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.btn_record:
                 startActivity(new Intent(MainActivity.this, ScreenRecordActivity.class));
+                break;
+
+            case R.id.btn_record_codec:
+                startActivity(new Intent(MainActivity.this, ScreenRecordByCodecActivity.class));
                 break;
 
             case R.id.btn_record_camera:
