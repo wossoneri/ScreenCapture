@@ -1,5 +1,6 @@
-package com.softard.wow.screencapture;
+package com.softard.wow.screencapture.View;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.SurfaceTexture;
@@ -9,9 +10,10 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
+import android.os.StrictMode;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseIntArray;
@@ -22,14 +24,18 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.softard.wow.screencapture.R;
 import com.softard.wow.screencapture.Utils.ScreenUtils;
 
+import java.io.File;
 import java.io.IOException;
 
+/**
+ * 使用MediaRecorder MediaProjection 录屏
+ */
 public class ScreenRecordActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener {
 
-
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "WOW";
     private static final int REQUEST_CODE = 1000;
     private static final int DISPLAY_WIDTH = 720;
     private static final int DISPLAY_HEIGHT = 1280;
@@ -55,7 +61,7 @@ public class ScreenRecordActivity extends AppCompatActivity implements TextureVi
     private int mHeight;
     private MediaPlayer mPlayer;
     private Surface mSurface;
-    private TextureView mTexture;
+//    private TextureView mTexture;
 
 
     @Override
@@ -84,6 +90,7 @@ public class ScreenRecordActivity extends AppCompatActivity implements TextureVi
         });
 
         mToggleButton = (ToggleButton) findViewById(R.id.toggle);
+        mToggleButton.setChecked(false);
         mToggleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,9 +98,9 @@ public class ScreenRecordActivity extends AppCompatActivity implements TextureVi
             }
         });
 
-        mTexture = (TextureView) findViewById(R.id.texture);
-        mTexture.setSurfaceTextureListener(this);
-        startActivityForResult(mProjectionManager.createScreenCaptureIntent(), REQUEST_CODE);
+//        mTexture = (TextureView) findViewById(R.id.texture);
+//        mTexture.setSurfaceTextureListener(this);
+//        startActivityForResult(mProjectionManager.createScreenCaptureIntent(), REQUEST_CODE);
     }
 
     @Override
@@ -103,8 +110,7 @@ public class ScreenRecordActivity extends AppCompatActivity implements TextureVi
             return;
         }
         if (resultCode != RESULT_OK) {
-            Toast.makeText(this,
-                    "Screen Cast Permission Denied", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Screen Cast Permission Denied", Toast.LENGTH_SHORT).show();
             mToggleButton.setChecked(false);
             return;
         }
@@ -113,6 +119,12 @@ public class ScreenRecordActivity extends AppCompatActivity implements TextureVi
         mMediaProjection.registerCallback(mMediaProjectionCallback, null);
 //        mVirtualDisplay = createVirtualDisplay();
 //        mMediaRecorder.start();
+        initRecorder();
+        shareScreen();
+
+//        ScreenRecordThread srt = new ScreenRecordThread(720, 1280, 1800, 1, mMediaProjection, ScreenUtils.VIDEO_PATH);
+//        srt.start();
+        moveTaskToBack(true);
     }
 
     public void onToggleScreenShare(View view) {
@@ -124,12 +136,7 @@ public class ScreenRecordActivity extends AppCompatActivity implements TextureVi
     }
 
     private void startRecord() {
-//        if (mMediaProjection == null) {
-//            startActivityForResult(mProjectionManager.createScreenCaptureIntent(), REQUEST_CODE);
-//            return;
-//        }
-        initRecorder();
-        shareScreen();
+        startActivityForResult(mProjectionManager.createScreenCaptureIntent(), REQUEST_CODE);
     }
 
     private void stopRecord() {
@@ -231,42 +238,63 @@ public class ScreenRecordActivity extends AppCompatActivity implements TextureVi
     }
 
     private void playVideo() {
-        if (mPlayer == null) {
-            mPlayer = new MediaPlayer();
-        } else {
-            mPlayer.stop();
-            mPlayer.reset();
-            mPlayer.release();
-        }
+//        if (mPlayer == null) {
+//            mPlayer = new MediaPlayer();
+//        } else {
+//            mPlayer.stop();
+//            mPlayer.reset();
+//            mPlayer.release();
+//        }
+//        try {
+//            mPlayer.setDataSource(ScreenUtils.VIDEO_PATH);
+//            mPlayer.setSurface(mSurface);
+//            mPlayer.prepare();
+//            mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//                @Override
+//                public void onPrepared(MediaPlayer mp) {
+//                    mPlayer.start();
+//                }
+//            });
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        File file = new File(ScreenUtils.VIDEO_PATH);
+        StrictMode.VmPolicy vmPolicy = StrictMode.getVmPolicy();
         try {
-            mPlayer.setDataSource(ScreenUtils.VIDEO_PATH);
-            mPlayer.setSurface(mSurface);
-            mPlayer.prepare();
-            mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    mPlayer.start();
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
+            // disable detecting FileUriExposure on public file
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().build());
+            viewResult(file);
+        } finally {
+            StrictMode.setVmPolicy(vmPolicy);
+        }
+    }
+
+    private void viewResult(File file) {
+        Intent view = new Intent(Intent.ACTION_VIEW);
+        view.addCategory(Intent.CATEGORY_DEFAULT);
+        view.setDataAndType(Uri.fromFile(file), "video/*");
+        view.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            startActivity(view);
+        } catch (ActivityNotFoundException e) {
+            // no activity can open this video
         }
     }
 
     private class MediaProjectionCallback extends MediaProjection.Callback {
         @Override
         public void onStop() {
-            if (mToggleButton.isChecked()) {
-                mToggleButton.setChecked(false);
-                mMediaRecorder.stop();
-                mMediaRecorder.reset();
-                Log.v(TAG, "Recording Stopped");
-            }
+//            if (mToggleButton.isChecked()) {
+//                mToggleButton.setChecked(false);
+//
+//            }
+            mMediaRecorder.stop();
+            mMediaRecorder.reset();
+            Log.v(TAG, "Recording Stopped");
             mMediaProjection = null;
             stopScreenSharing();
         }
     }
-
 }
 
 

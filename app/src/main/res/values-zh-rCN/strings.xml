@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">截屏</string>
+    <string name="scan_qr_code">扫一扫</string>
+    <string name="socket_server">Socket 服务器</string>
+    <string name="socket_client">Socket 客户端</string>
+    <string name="using_your_mic_to_record_audio">需要录音权限和存储权限进行录制</string>
+    <string name="no_permission">没有权限！</string>
+    <string name="create_screenRecorder_failure">创建ScreenRecorder失败</string>
+    <string name="stop_recorder">停止录制</string>
+    <string name="restart_recorder">重新录制</string>
+    <string name="no_permission_to_write_sd_ard">没有SD权限保存文件</string>
+</resources>

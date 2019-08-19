@@ -1,4 +1,4 @@
-package com.softard.wow.screencapture;
+package com.softard.wow.screencapture.Utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -17,8 +17,6 @@ import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.softard.wow.screencapture.Utils.ImageUtils;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -30,9 +28,10 @@ import java.util.Date;
  * Created by wow on 3/23/18.
  */
 
-public class ScreenCapture {
+public class ScreenCapturer {
     private static MediaProjection sMediaProjection;
     boolean isScreenCaptureStarted;
+    OnImageCaptureScreenListener listener;
     private int mDensity;
     private Display mDisplay;
     private int mWidth;
@@ -43,8 +42,7 @@ public class ScreenCapture {
     private String STORE_DIR;
     private Context mContext;
 
-
-    public ScreenCapture(Context context, MediaProjection mediaProjection, String savePath) {
+    public ScreenCapturer(Context context, MediaProjection mediaProjection, String savePath) {
         sMediaProjection = mediaProjection;
         mContext = context;
 
@@ -73,14 +71,14 @@ public class ScreenCapture {
         }
     }
 
-    public void startProjection() {
+    public ScreenCapturer startProjection() {
         if (sMediaProjection != null) {
             File storeDir = new File(STORE_DIR);
             if (!storeDir.exists()) {
                 boolean success = storeDir.mkdirs();
                 if (!success) {
                     Log.d("WOW", "mkdir " + storeDir + "  failed");
-                    return;
+                    return this;
                 } else {
                     Log.d("WOW", "mkdir " + storeDir + "  success");
                 }
@@ -135,8 +133,11 @@ public class ScreenCapture {
                     try {
                         image = reader.acquireLatestImage();
                         if (image != null) {
-                            bitmap = ImageUtils.image_ARGB8888_2_bitmap(metrics, image);
-
+//                            bitmap = ImageUtils.image_ARGB8888_2_bitmap(metrics, image);
+                            bitmap = ImageUtils.image_2_bitmap(image, Bitmap.Config.ARGB_8888);
+                            if (null != listener) {
+                                listener.imageCaptured(ImageUtils.bitmap2byte(bitmap, 80));
+                            }
 
                             Date currentDate = new Date();
                             SimpleDateFormat date = new SimpleDateFormat("yyyyMMddhhmmss");
@@ -170,9 +171,10 @@ public class ScreenCapture {
             }
         }, mHandler);
         sMediaProjection.registerCallback(new MediaProjectionStopCallback(), mHandler);
+        return this;
     }
 
-    public void stopProjection() {
+    public ScreenCapturer stopProjection() {
         isScreenCaptureStarted = false;
         Log.d("WOW", "Screen captured");
         mHandler.post(new Runnable() {
@@ -183,6 +185,16 @@ public class ScreenCapture {
                 }
             }
         });
+        return this;
+    }
+
+    public ScreenCapturer setListener(OnImageCaptureScreenListener listener) {
+        this.listener = listener;
+        return this;
+    }
+
+    public interface OnImageCaptureScreenListener {
+        public void imageCaptured(byte[] image);
     }
 
     private class MediaProjectionStopCallback extends MediaProjection.Callback {
